@@ -40,6 +40,9 @@ $hotels = [
 
 ];
 
+$parking_filter = $_GET["parking_filter"];
+$vote_filter = $_GET["vote_filter"];
+
 ?>
 
 
@@ -54,11 +57,40 @@ $hotels = [
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <title> PHP Hotel</title>
+    
 </head>
 <body>
 
-    <h1 class="text-center pb-5">Hotels</h1>
-    <table class="table text-center">
+    <h1 class="text-center py-3">Hotels</h1>
+
+    <div class="container">
+        <form action="" method="get">
+            <div class="card p-3 w-10">
+                <div class="mb-5">
+                    <label for="parking_filter" class="form-label">Parking</label>
+                    <select class="form-select form-select-lg" name="parking_filter" id="parking_filter">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+                <div class="mb-5">
+                    <label for="vote_filter" class="form-label">Vote</label>
+                    <select class="form-select form-select-lg" name="vote_filter" id="vote_filter">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <button type="submit" name="parking_submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+
+
+
+    <table class="table text-center my-5">
         <thead>
             <tr>
                 <th scope="col">Hotel name</th>
@@ -70,30 +102,29 @@ $hotels = [
         </thead>
 
         <tbody>
-            <?php foreach ($hotels as $hotel): ?>
-            <tr>
-                <th scope="row">
-                    <?=$hotel['name']?>
-                </th>
-                <td>
-                    <?=$hotel['description']?>
-                </td>
-                <td>
-                    <?php if ($hotel["parking"] === true) { ?>
-                        <i class="fa-regular fa-circle-check text-success"></i>
-                    <?php } else { ?>
-                        <i class="fa-regular fa-circle-xmark text-danger"></i>
-                    <?php } ?>
-                </td>
-                <td>
-                    <?=$hotel['vote']?>
-                </td>
-                <td>
-                    <?=$hotel['distance_to_center']?>
-                </td>
-            </tr>
+            <?php foreach ($hotels as $hotel) : ?>
+                <tr>
+                    <?php foreach ($hotel as $key => $value) : ?>
+                        <?php if ($hotel["parking"] == $parking_filter || $parking_filter === null) : ?>
+                            <?php if ($hotel["vote"] >= $vote_filter) : ?>
+                                <?php if ($value === true) : ?>
+                                    <td>
+                                        <i class="fa-regular fa-circle-check text-success"></i>
+                                    </td>
+                                <?php elseif ($value === false) : ?>
+                                    <td>
+                                        <i class="fa-regular fa-circle-xmark text-danger"></i>
+                                    </td>
+                                <?php else : ?>
+                                    <td><?= $value ?></td>
+                                <?php endif ?>
+                            <?php endif ?>
+                        <?php endif ?>
+                    <?php endforeach ?>
+                </tr>
+            <?php endforeach ?>
         </tbody>
-        <?php endforeach;?>
+
     </table>
 
 </body>
