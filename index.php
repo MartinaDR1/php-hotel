@@ -43,6 +43,21 @@ $hotels = [
 $parking_filter = $_GET["parking_filter"];
 $vote_filter = $_GET["vote_filter"];
 
+
+if (!empty($_GET['parking_filter']) && !empty($_GET['vote_filter'])) {
+    
+    $hotels = array_filter($hotels, function ($hotel) {
+      return $hotel['parking'] && $hotel['vote'] >= $_GET['vote_filter'];
+    });
+  } elseif (!empty($_GET['parking_filter'])) {
+    $hotels = array_filter($hotels, function ($hotel) {
+      return $hotel['parking'];
+    });
+  } elseif (!empty($_GET['vote_filter'])) {
+    $hotels = array_filter($hotels, function ($hotel) {
+      return $hotel['vote'] >= $_GET['vote_filter'];
+    });
+  }
 ?>
 
 
@@ -67,11 +82,10 @@ $vote_filter = $_GET["vote_filter"];
         <form action="" method="get">
             <div class="card p-3 w-10">
                 <div class="mb-5">
-                    <label for="parking_filter" class="form-label">Parking</label>
-                    <select class="form-select form-select-lg" name="parking_filter" id="parking_filter">
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
+                    <label class="custom-control custom-checkbox">
+                      <input type="checkbox" name="parking_filter" id="parking_filter" value="checkedValue" class="custom-control-input">
+                      <span class="custom-control-indicator">Parking</span>
+                    </label>
                 </div>
                 <div class="mb-5">
                     <label for="vote_filter" class="form-label">Vote</label>
@@ -102,29 +116,30 @@ $vote_filter = $_GET["vote_filter"];
         </thead>
 
         <tbody>
-            <?php foreach ($hotels as $hotel) : ?>
-                <tr>
-                    <?php foreach ($hotel as $key => $value) : ?>
-                        <?php if ($hotel["parking"] == $parking_filter || $parking_filter === null) : ?>
-                            <?php if ($hotel["vote"] >= $vote_filter) : ?>
-                                <?php if ($value === true) : ?>
-                                    <td>
-                                        <i class="fa-regular fa-circle-check text-success"></i>
-                                    </td>
-                                <?php elseif ($value === false) : ?>
-                                    <td>
-                                        <i class="fa-regular fa-circle-xmark text-danger"></i>
-                                    </td>
-                                <?php else : ?>
-                                    <td><?= $value ?></td>
-                                <?php endif ?>
-                            <?php endif ?>
-                        <?php endif ?>
-                    <?php endforeach ?>
-                </tr>
-            <?php endforeach ?>
+            <?php foreach ($hotels as $hotel): ?>
+            <tr>
+                <th scope="row">
+                    <?=$hotel['name']?>
+                </th>
+                <td>
+                    <?=$hotel['description']?>
+                </td>
+                <td>
+                    <?php if ($hotel["parking"] === true) { ?>
+                        <i class="fa-regular fa-circle-check text-success"></i>
+                    <?php } else { ?>
+                        <i class="fa-regular fa-circle-xmark text-danger"></i>
+                    <?php } ?>
+                </td>
+                <td>
+                    <?=$hotel['vote']?>
+                </td>
+                <td>
+                    <?=$hotel['distance_to_center']?>
+                </td>
+            </tr>
         </tbody>
-
+        <?php endforeach;?>
     </table>
 
 </body>
